@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kim Minsou — Portfolio</title>
+  <meta name="description" content="Kim Minsou — Sculptor & Visual Artist based in Seoul, KR" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f3f0;
+      --bg2: #edeae6;
+      --bg3: #ffffff;
+      --text: #1a1a18;
+      --text2: #6b6b66;
+      --text3: #a5a49f;
+      --border: rgba(0,0,0,0.1);
+      --border2: rgba(0,0,0,0.18);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 48px 56px;
+    }
+    .slide.active { opacity: 1; }
+
+    .slide-bg {
+      position: absolute;
+      inset: 0;
+      transition: transform 9s ease;
+    }
+    .slide.active .slide-bg { transform: scale(1.05); }
+
+    .slide-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.08) 55%, transparent 100%);
+    }
+
+    .slide-content { position: relative; z-index: 2; }
+
+    .slide-num {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 10px;
+    }
+
+    .slide-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 5vw, 58px);
+      font-weight: 300;
+      color: #fff;
+      letter-spacing: 0.04em;
+      line-height: 1.05;
+      margin-bottom: 10px;
+    }
+
+    .slide-sub {
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+    }
+
+    /* dots + bar */
+    .hero-dots {
+      position: absolute;
+      bottom: 24px;
+      right: 28px;
+      z-index: 5;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .dot {
+      width: 22px; height: 2px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+      transition: all 0.4s;
+      cursor: pointer;
+    }
+    .dot.active { width: 36px; background: rgba(255,255,255,0.9); }
+
+    .progress-bar {
+      position: absolute;
+      bottom: 0; left: 0;
+      height: 2px;
+      background: rgba(255,255,255,0.65);
+      z-index: 5;
+      transition: width 0.08s linear;
+    }
+
+    /* scroll hint */
+    .scroll-hint {
+      position: absolute;
+      bottom: 28px; left: 56px;
+      z-index: 5;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    .scroll-hint::after {
+      content: '';
+      display: inline-block;
+      width: 20px; height: 0.5px;
+      background: rgba(255,255,255,0.35);
+    }
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(4px); }
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 40px;
+    }
+
+    .site-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 300;
+      letter-spacing: 0.16em;
+      color: #fff;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .site-logo span { font-style: italic; opacity: 0.6; }
+
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.25s;
+    }
+    .nav-links a:hover, .nav-links a.nav-active { color: #fff; }
+
+    /* ── PAGES ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── WORKS ── */
+    .gallery-section { padding: 36px 24px 48px; max-width: 1100px; margin: 0 auto; }
+
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 0.5px;
+      background: var(--border);
+    }
+
+    .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+
+    .filter-btn {
+      font-size: 11px;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 24px;
+      border: 0.5px solid var(--border2);
+      background: transparent;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--bg3);
+      color: var(--text);
+      border-color: var(--border2);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+    }
+
+    @media (max-width: 600px) {
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .art-card {
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      background: var(--bg2);
+      aspect-ratio: 1;
+    }
+    .art-card.hidden { display: none; }
+    .art-card-inner {
+      width: 100%; height: 100%;
+      transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .art-card:hover .art-card-inner { transform: scale(1.07); }
+
+    .art-placeholder {
+      width: 100%;
+      height: calc(100% - 52px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-style: italic;
+      font-weight: 300;
+      color: rgba(0,0,0,0.15);
+    }
+
+    /* 실제 이미지 사용 시 */
+    .art-placeholder img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .art-info {
+      height: 52px;
+      padding: 10px 14px;
+      background: var(--bg3);
+      border-top: 0.5px solid var(--border);
+    }
+    .art-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .art-year {
+      font-size: 11px;
+      color: var(--text3);
+      letter-spacing: 0.05em;
+      margin-top: 2px;
+    }
+
+    .art-overlay {
+      position: absolute;
+      inset: 0 0 52px 0;
+      background: rgba(0,0,0,0);
+      transition: background 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .art-card:hover .art-overlay { background: rgba(0,0,0,0.2); }
+
+    .view-hint {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0;
+      transition: opacity 0.3s;
+      padding: 6px 14px;
+      border: 0.5px solid rgba(255,255,255,0.6);
+      border-radius: 24px;
+      background: rgba(0,0,0,0.22);
+    }
+    .art-card:hover .view-hint { opacity: 1; }
+
+    /* ── ABOUT ── */
+    .about-section {
+      padding: 48px 40px 64px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .about-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px;
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .about-role {
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 36px;
+    }
+    .about-bio {
+      font-size: 15px;
+      line-height: 1.9;
+      color: var(--text2);
+      border-left: 1.5px solid var(--border2);
+      padding-left: 20px;
+    }
+
+    /* ── CONTACT ── */
+    .contact-section {
+      padding: 48px 40px 64px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .contact-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 38px;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 36px;
+      letter-spacing: 0.04em;
+    }
+
+    .contact-list { display: flex; flex-direction: column; }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px 0;
+      border-bottom: 0.5px solid var(--border);
+      transition: background 0.2s;
+    }
+    .contact-item:first-child { border-top: 0.5px solid var(--border); }
+
+    .contact-icon {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: 0.5px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .contact-icon svg {
+      width: 16px; height: 16px;
+      stroke: var(--text2);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .contact-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 4px;
+    }
+    .contact-value {
+      font-size: 15px;
+      color: var(--text);
+    }
+    .contact-value a {
+      color: var(--text);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .contact-value a:hover { color: var(--text2); }
+
+    /* ── MODAL ── */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.78);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-backdrop.open { display: flex; }
+
+    .modal-wrap { position: relative; max-width: 520px; width: 100%; }
+
+    .modal-close {
+      position: absolute;
+      top: -16px; right: -16px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 0.5px solid var(--border2);
+      background: var(--bg3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: var(--text2);
+      z-index: 5;
+      transition: background 0.2s;
+    }
+    .modal-close:hover { background: var(--bg2); }
+
+    .modal {
+      background: var(--bg3);
+      border-radius: 12px;
+      border: 0.5px solid var(--border);
+      overflow: hidden;
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+
+    .modal-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 52px;
+      font-style: italic;
+      color: rgba(0,0,0,0.15);
+    }
+
+    .modal-body { padding: 24px 28px 32px; }
+
+    .modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .modal-meta {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 18px;
+    }
+    .modal-desc {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--text2);
+      margin-bottom: 18px;
+    }
+    .modal-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag {
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 24px;
+      border: 0.5px solid var(--border2);
+      color: var(--text3);
+    }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      text-align: center;
+      padding: 32px;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--text3);
+      border-top: 0.5px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HERO ── -->
+  <div class="hero" id="hero">
+    <header class="site-header">
+      <a class="site-logo" onclick="showPage('works')">Kim <span>Minsou</span></a>
+      <nav>
+        <ul class="nav-links">
+          <li><a id="nav-works" class="nav-active" onclick="showPage('works')">Works</a></li>
+          <li><a id="nav-about" onclick="showPage('about')">About</a></li>
+          <li><a id="nav-contact" onclick="showPage('contact')">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <div id="slides"></div>
+    <div class="scroll-hint">Scroll to gallery</div>
+    <div class="hero-dots" id="dots"></div>
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- ── WORKS ── -->
+  <div id="page-works" class="page active">
+    <div class="gallery-section">
+      <div class="section-label">Works</div>
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="Painting">Painting</button>
+        <button class="filter-btn" data-filter="Digital">Digital</button>
+        <button class="filter-btn" data-filter="Photo">Photo</button>
+        <button class="filter-btn" data-filter="Sculpture">Sculpture</button>
+      </div>
+      <div class="gallery-grid" id="gallery"></div>
+    </div>
+  </div>
+
+  <!-- ── ABOUT ── -->
+  <div id="page-about" class="page">
+    <div class="about-section">
+      <div class="section-label">About</div>
+      <div class="about-name">Kim Minsou</div>
+      <div class="about-role">Sculptor · Visual Artist · Seoul, KR</div>
+      <div class="about-bio">
+        조형과 공간 사이에서 존재의 무게를 탐구하는 작가입니다. 회화, 조각, 디지털 매체를 넘나들며
+        물질과 기억, 시간과 흔적이라는 주제를 작업으로 풀어냅니다. 서울을 기반으로 활동하며,
+        인스타그램 <strong>@whoimsou</strong>에서 작업 과정을 기록하고 있습니다.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CONTACT ── -->
+  <div id="page-contact" class="page">
+    <div class="contact-section">
+      <div class="section-label">Contact</div>
+      <div class="contact-title">Get in touch</div>
+      <div class="contact-list">
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">E-mail</div>
+            <div class="contact-value"><a href="mailto:drkms104@naver.com">drkms104@naver.com</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.63 19.79 19.79 0 01.01 1 2 2 0 012 .01h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">Call</div>
+            <div class="contact-value"><a href="tel:01039221280">010-3922-1280</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">Instagram</div>
+            <div class="contact-value"><a href="https://instagram.com/whoimsou" target="_blank">@whoimsou</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">© 2025 Kim Minsou. All rights reserved.</footer>
+
+  <!-- ── MODAL ── -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal-wrap">
+      <button class="modal-close" id="modalClose">×</button>
+      <div class="modal">
+        <div class="modal-img" id="modalImg"></div>
+        <div class="modal-body">
+          <div class="modal-title" id="modalTitle"></div>
+          <div class="modal-meta" id="modalMeta"></div>
+          <div class="modal-desc" id="modalDesc"></div>
+          <div class="modal-tags" id="modalTags"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ── 작품 데이터 ── */
+    const works = [
+      {
+        emoji: "I",
+        title: "무제 #1",
+        year: "2024",
+        medium: "Oil on canvas · 90×120cm",
+        desc: "빛과 그림자의 경계에서 피어나는 감정의 잔상. 거친 질감 위에 쌓인 색채 층은 시간의 흔적을 담고 있다.",
+        tags: ["Painting", "Abstract"],
+        bg: "#b8a99a",
+        cat: "Painting"
+      },
+      {
+        emoji: "II",
+        title: "기억의 파편",
+        year: "2023",
+        medium: "Acrylic · 60×80cm",
+        desc: "흐릿하게 남은 기억의 조각들을 화폭 위에 재구성한 작품. 선명함과 흐림 사이의 긴장감을 색으로 표현했다.",
+        tags: ["Painting"],
+        bg: "#8d9a8e",
+        cat: "Painting"
+      },
+      {
+        emoji: "III",
+        title: "도시의 숨결",
+        year: "2024",
+        medium: "Digital · Print",
+        desc: "서울의 새벽, 사람들이 떠난 거리에서 도시가 스스로 호흡하는 모습을 포착했다.",
+        tags: ["Digital", "Urban"],
+        bg: "#7a8a96",
+        cat: "Digital"
+      },
+      {
+        emoji: "IV",
+        title: "Silence",
+        year: "2023",
+        medium: "Photograph · Archival print",
+        desc: "아무것도 없는 공간에서 발견한 충만함. 빈 의자, 비어있는 창가에서 오히려 가장 많은 이야기를 들었다.",
+        tags: ["Photo"],
+        bg: "#9e9488",
+        cat: "Photo"
+      },
+      {
+        emoji: "V",
+        title: "형태 연구 I",
+        year: "2024",
+        medium: "Sculpture · Steel · 40×60cm",
+        desc: "강철의 차가운 표면과 유기적인 곡선이 만나는 지점. 단단한 재료 안에서 부드러움을 찾는 조형 탐구.",
+        tags: ["Sculpture"],
+        bg: "#8888a0",
+        cat: "Sculpture"
+      },
+      {
+        emoji: "VI",
+        title: "Red Interior",
+        year: "2022",
+        medium: "Oil on canvas · 80×100cm",
+        desc: "붉은색은 단순한 색이 아닌 감정의 언어다. 실내 공간을 가득 채운 붉은 빛이 공간을 새롭게 정의한다.",
+        tags: ["Painting"],
+        bg: "#9e7a76",
+        cat: "Painting"
+      },
+      {
+        emoji: "VII",
+        title: "덩어리",
+        year: "2024",
+        medium: "Sculpture · Ceramic · Variable",
+        desc: "흙의 무게와 손의 흔적이 고스란히 남은 덩어리. 완성이 아닌 과정 자체가 작품이다.",
+        tags: ["Sculpture"],
+        bg: "#a08870",
+        cat: "Sculpture"
+      },
+      {
+        emoji: "VIII",
+        title: "잔상 #3",
+        year: "2023",
+        medium: "Digital print · 50×70cm",
+        desc: "눈을 감아도 남는 이미지들. 망막 위에 새겨진 잔상은 현실보다 더 선명하게 기억 속에 살아있다.",
+        tags: ["Digital"],
+        bg: "#7c8a7e",
+        cat: "Digital"
+      },
+      {
+        emoji: "IX",
+        title: "Surface",
+        year: "2022",
+        medium: "Photograph",
+        desc: "표면에 집착한다. 긁힌 자국, 녹의 무늬, 박락된 페인트. 시간이 사물에 남긴 필적을 따라간다.",
+        tags: ["Photo"],
+        bg: "#8a8880",
+        cat: "Photo"
+      },
+    ];
+
+    /* ── HERO SLIDESHOW ── */
+    const heroIdx = [0, 2, 4, 6];
+    const slidesEl = document.getElementById('slides');
+    const dotsEl = document.getElementById('dots');
+
+    heroIdx.forEach((wi, i) => {
+      const w = works[wi];
+      const s = document.createElement('div');
+      s.className = 'slide' + (i === 0 ? ' active' : '');
+      s.innerHTML = `
+        <div class="slide-bg" style="background:${w.bg};"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="slide-num">0${i+1} — 0${heroIdx.length}</div>
+          <div class="slide-title">${w.title}</div>
+          <div class="slide-sub">${w.medium}</div>
+        </div>`;
+      slidesEl.appendChild(s);
+
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.addEventListener('click', e => { e.stopPropagation(); goTo(i); });
+      dotsEl.appendChild(d);
+    });
+
+    let cur = 0, progress = 0;
+    const DURATION = 4500, TICK = 60;
+    const slideEls = document.querySelectorAll('.slide');
+    const dotEls   = document.querySelectorAll('.dot');
+    const bar      = document.getElementById('progressBar');
+
+    function goTo(n) {
+      slideEls[cur].classList.remove('active');
+      dotEls[cur].classList.remove('active');
+      cur = n;
+      slideEls[cur].classList.add('active');
+      dotEls[cur].classList.add('active');
+      progress = 0;
+      bar.style.width = '0%';
+    }
+
+    setInterval(() => {
+      progress += TICK;
+      bar.style.width = (progress / DURATION * 100) + '%';
+      if (progress >= DURATION) goTo((cur + 1) % heroIdx.length);
+    }, TICK);
+
+    document.getElementById('hero').addEventListener('click', () => goTo((cur + 1) % heroIdx.length));
+
+    /* ── GALLERY ── */
+    const gallery = document.getElementById('gallery');
+    works.forEach(w => {
+      const card = document.createElement('div');
+      card.className = 'art-card';
+      card.dataset.cat = w.cat;
+      card.innerHTML = `
+        <div class="art-card-inner">
+          <div class="art-placeholder" style="background:${w.bg};">${w.emoji}</div>
+          <div class="art-overlay"><span class="view-hint">View</span></div>
+          <div class="art-info">
+            <div class="art-title">${w.title}</div>
+            <div class="art-year">${w.year}</div>
+          </div>
+        </div>`;
+      card.addEventListener('click', () => openModal(w));
+      gallery.appendChild(card);
+    });
+
+    /* ── FILTER ── */
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const f = this.dataset.filter;
+        document.querySelectorAll('.art-card').forEach(c => {
+          c.classList.toggle('hidden', f !== 'all' && c.dataset.cat !== f);
+        });
+      });
+    });
+
+    /* ── NAV ── */
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + name).classList.add('active');
+      document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('nav-active'));
+      document.getElementById('nav-' + name).classList.add('nav-active');
+      window.scrollTo({ top: document.querySelector('.hero').offsetHeight, behavior: 'smooth' });
+    }
+
+    /* ── MODAL ── */
+    function openModal(w) {
+      document.getElementById('modalImg').style.background = w.bg;
+      document.getElementById('modalImg').textContent = w.emoji;
+      document.getElementById('modalTitle').textContent = w.title;
+      document.getElementById('modalMeta').textContent = w.medium;
+      document.getElementById('modalDesc').textContent = w.desc;
+      document.getElementById('modalTags').innerHTML = w.tags.map(t => `<span class="tag">${t}</span>`).join('');
+      document.getElementById('modalBackdrop').classList.add('open');
+    }
+
+    document.getElementById('modalClose').addEventListener('click', () => {
+      document.getElementById('modalBackdrop').classList.remove('open');
+    });
+    document.getElementById('modalBackdrop').addEventListener('click', e => {
+      if (e.target === document.getElementById('modalBackdrop'))
+        document.getElementById('modalBackdrop').classList.remove('open');
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') document.getElementById('modalBackdrop').classList.remove('open');
+    });
+  </script>
+</body>
+</html>
